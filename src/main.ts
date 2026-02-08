@@ -1,6 +1,6 @@
-import { Plugin, MarkdownView } from 'obsidian';
-import { Extension, Prec, RangeSetBuilder, StateField, Transaction } from '@codemirror/state';
-import { EditorView, Decoration, DecorationSet } from '@codemirror/view';
+import { Plugin } from 'obsidian';
+import { Prec, RangeSetBuilder } from '@codemirror/state';
+import { EditorView, Decoration, DecorationSet, ViewPlugin, ViewUpdate, PluginValue } from '@codemirror/view';
 import { SPL_COMMANDS, SPL_FUNCTIONS, SPL_KEYWORDS } from './spl-tokens';
 
 interface Token {
@@ -234,7 +234,6 @@ function findSPLCodeBlocks(text: string): Array<{ contentStart: number; contentE
   let match;
 
   while ((match = regex.exec(text)) !== null) {
-    const fullMatch = match[0];
     const codeContent = match[2];
 
     // Calculate where the code content starts in the document
@@ -278,33 +277,6 @@ function buildSPLDecorations(view: EditorView): DecorationSet {
   return builder.finish();
 }
 
-// StateField to manage decorations
-const splDecorationField = StateField.define<DecorationSet>({
-  create(state) {
-    // Create a minimal EditorView-like object for initial creation
-    return Decoration.none;
-  },
-  update(decorations, tr) {
-    // We'll rebuild on any doc change via the extension
-    return decorations;
-  },
-  provide(field) {
-    return EditorView.decorations.from(field);
-  }
-});
-
-// Extension that rebuilds decorations when document changes
-const splHighlightExtension = EditorView.updateListener.of((update) => {
-  if (update.docChanged || update.viewportChanged) {
-    const decorations = buildSPLDecorations(update.view);
-    // Apply decorations through a transaction effect would be complex,
-    // so we use the plugin approach below instead
-  }
-});
-
-// Use ViewPlugin for simpler decoration management
-import { ViewPlugin, ViewUpdate, PluginValue } from '@codemirror/view';
-
 class SPLHighlightPluginValue implements PluginValue {
   decorations: DecorationSet;
 
@@ -326,7 +298,7 @@ const splViewPlugin = ViewPlugin.fromClass(SPLHighlightPluginValue, {
 });
 
 export default class SPLSyntaxPlugin extends Plugin {
-  async onload() {
+  onload() {
     // Register the editor extension for Live Preview / Source mode
     this.registerEditorExtension([Prec.lowest(splViewPlugin)]);
 
@@ -336,23 +308,22 @@ export default class SPLSyntaxPlugin extends Plugin {
       const code = pre.createEl('code');
 
       const tokens = tokenizeSPL(source);
-
-      let result = '';
       let lastEnd = 0;
 
       for (const token of tokens) {
         if (token.start > lastEnd) {
-          result += escapeHtml(source.slice(lastEnd, token.start));
+          code.appendText(source.slice(lastEnd, token.start));
         }
-        result += `<span class="spl-${token.type}">${escapeHtml(source.slice(token.start, token.end))}</span>`;
+        code.createEl('span', {
+          cls: `spl-${token.type}`,
+          text: source.slice(token.start, token.end),
+        });
         lastEnd = token.end;
       }
 
       if (lastEnd < source.length) {
-        result += escapeHtml(source.slice(lastEnd));
+        code.appendText(source.slice(lastEnd));
       }
-
-      code.innerHTML = result;
     };
 
     // Register code block processor for Reading view - handles ```spl blocks
@@ -368,11 +339,3 @@ export default class SPLSyntaxPlugin extends Plugin {
   onunload() {}
 }
 
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}

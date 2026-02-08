@@ -416,7 +416,6 @@ var SPL_KEYWORDS = /* @__PURE__ */ new Set([
 ]);
 
 // src/main.ts
-var import_view2 = require("@codemirror/view");
 var decorations = {
   keyword: import_view.Decoration.mark({ class: "spl-keyword" }),
   builtin: import_view.Decoration.mark({ class: "spl-builtin" }),
@@ -598,7 +597,6 @@ function findSPLCodeBlocks(text) {
   const regex = /(`{3,})(?:spl|splunk)\s*\n([\s\S]*?)\1/gi;
   let match;
   while ((match = regex.exec(text)) !== null) {
-    const fullMatch = match[0];
     const codeContent = match[2];
     const headerEnd = match[0].indexOf("\n") + 1;
     const contentStart = match.index + headerEnd;
@@ -628,22 +626,6 @@ function buildSPLDecorations(view) {
   }
   return builder.finish();
 }
-var splDecorationField = import_state.StateField.define({
-  create(state) {
-    return import_view.Decoration.none;
-  },
-  update(decorations2, tr) {
-    return decorations2;
-  },
-  provide(field) {
-    return import_view.EditorView.decorations.from(field);
-  }
-});
-var splHighlightExtension = import_view.EditorView.updateListener.of((update) => {
-  if (update.docChanged || update.viewportChanged) {
-    const decorations2 = buildSPLDecorations(update.view);
-  }
-});
 var SPLHighlightPluginValue = class {
   constructor(view) {
     this.decorations = buildSPLDecorations(view);
@@ -656,29 +638,30 @@ var SPLHighlightPluginValue = class {
   destroy() {
   }
 };
-var splViewPlugin = import_view2.ViewPlugin.fromClass(SPLHighlightPluginValue, {
+var splViewPlugin = import_view.ViewPlugin.fromClass(SPLHighlightPluginValue, {
   decorations: (v) => v.decorations
 });
 var SPLSyntaxPlugin = class extends import_obsidian.Plugin {
-  async onload() {
+  onload() {
     this.registerEditorExtension([import_state.Prec.lowest(splViewPlugin)]);
     const renderSPLBlock = (source, el) => {
       const pre = el.createEl("pre", { cls: "spl-codeblock" });
       const code = pre.createEl("code");
       const tokens = tokenizeSPL(source);
-      let result = "";
       let lastEnd = 0;
       for (const token of tokens) {
         if (token.start > lastEnd) {
-          result += escapeHtml(source.slice(lastEnd, token.start));
+          code.appendText(source.slice(lastEnd, token.start));
         }
-        result += `<span class="spl-${token.type}">${escapeHtml(source.slice(token.start, token.end))}</span>`;
+        code.createEl("span", {
+          cls: `spl-${token.type}`,
+          text: source.slice(token.start, token.end)
+        });
         lastEnd = token.end;
       }
       if (lastEnd < source.length) {
-        result += escapeHtml(source.slice(lastEnd));
+        code.appendText(source.slice(lastEnd));
       }
-      code.innerHTML = result;
     };
     this.registerMarkdownCodeBlockProcessor("spl", (source, el, ctx) => renderSPLBlock(source, el));
     this.registerMarkdownCodeBlockProcessor("SPL", (source, el, ctx) => renderSPLBlock(source, el));
@@ -690,6 +673,3 @@ var SPLSyntaxPlugin = class extends import_obsidian.Plugin {
   onunload() {
   }
 };
-function escapeHtml(text) {
-  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}

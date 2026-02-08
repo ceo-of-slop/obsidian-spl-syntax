@@ -111,7 +111,7 @@ const splStreamParser = {
     }
 
     // Arithmetic operators
-    if (stream.match(/[+\-*\/%]/)) {
+    if (stream.match(/[+\-*/%]/)) {
       return 'operator';
     }
 
@@ -166,7 +166,7 @@ const splStreamLanguage = StreamLanguage.define(splStreamParser);
 const splLanguageDescription = LanguageDescription.of({
   name: 'spl',
   alias: ['SPL', 'splunk'],
-  load: async () => {
+  load() {
     return splStreamLanguage;
   },
 });
