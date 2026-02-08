@@ -1,6 +1,8 @@
 # SPL Syntax Highlighting
 
-Syntax highlighting for Splunk Processing Language (SPL) in Obsidian code blocks. Works in both editing (Live Preview) and reading view.
+Syntax highlighting for Splunk Processing Language (SPL) in Obsidian code blocks.
+
+![SPL Syntax Highlighting](screenshot.png)
 
 ## Features
 
