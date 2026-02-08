@@ -1,0 +1,135 @@
+/* SPL Syntax Highlighting for Obsidian */
+/* Uses spl- prefix to avoid conflicts with built-in styles */
+
+/* Reading view code block styling */
+.spl-codeblock {
+  background-color: var(--code-background);
+  border-radius: var(--radius-s);
+  padding: var(--size-4-2) var(--size-4-4);
+  overflow-x: auto;
+  font-family: var(--font-monospace);
+  line-height: var(--line-height-tight);
+}
+
+.spl-codeblock code {
+  background: none;
+  padding: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ============================================ */
+/* Light Theme */
+/* ============================================ */
+
+/* Commands (stats, eval, search, etc.) - Blue */
+.spl-keyword {
+  color: #0066cc !important;
+  font-weight: 500;
+}
+
+/* Functions (count, avg, if, etc.) - Pink/Magenta */
+.spl-builtin {
+  color: #cc00cc !important;
+}
+
+/* Keywords/Boolean (AS, BY, AND, OR, true, false) - Orange */
+.spl-atom {
+  color: #ff6600 !important;
+}
+
+/* Operators (=, !=, <, >) - Orange */
+.spl-operator {
+  color: #ff6600 !important;
+}
+
+/* Pipe operator and commas - Dark Gray, bold */
+.spl-punctuation {
+  color: #333333 !important;
+  font-weight: bold;
+}
+
+/* Strings ("value", 'value') - Red/Brown */
+.spl-string {
+  color: #aa1111 !important;
+}
+
+/* Numbers (123, 45.67) - Purple */
+.spl-number {
+  color: #6600cc !important;
+}
+
+/* Fields/Variables (src_ip, user, _time) - Teal */
+.spl-variable {
+  color: #008080 !important;
+}
+
+/* Macros (backtick wrapped) - Gold/Amber with background */
+.spl-meta {
+  color: #b8860b !important;
+  background-color: rgba(184, 134, 11, 0.08);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+/* Comments (triple-backtick wrapped) - Gray, italic */
+.spl-comment {
+  color: #888888 !important;
+  font-style: italic;
+}
+
+/* Brackets and Parentheses - Dark Gray */
+.spl-bracket {
+  color: #333333 !important;
+}
+
+/* ============================================ */
+/* Dark Theme */
+/* ============================================ */
+
+.theme-dark .spl-keyword {
+  color: #6bb3f0 !important;
+}
+
+.theme-dark .spl-builtin {
+  color: #e48ce4 !important;
+}
+
+.theme-dark .spl-atom {
+  color: #ffa64d !important;
+}
+
+.theme-dark .spl-operator {
+  color: #ffa64d !important;
+}
+
+.theme-dark .spl-punctuation {
+  color: #cccccc !important;
+}
+
+.theme-dark .spl-string {
+  color: #e88888 !important;
+}
+
+.theme-dark .spl-number {
+  color: #b38de8 !important;
+}
+
+.theme-dark .spl-variable {
+  color: #4db8b8 !important;
+}
+
+.theme-dark .spl-meta {
+  color: #e8b84d !important;
+  background-color: rgba(232, 184, 77, 0.12);
+}
+
+.theme-dark .spl-comment {
+  color: #777777 !important;
+  font-style: italic;
+}
+
+.theme-dark .spl-bracket {
+  color: #bbbbbb !important;
+}

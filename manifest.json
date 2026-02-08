@@ -1,0 +1,9 @@
+{
+  "id": "spl-syntax-highlighting",
+  "name": "SPL Syntax Highlighting",
+  "version": "1.0.1",
+  "minAppVersion": "1.0.0",
+  "description": "Syntax highlighting for Splunk Processing Language (SPL) in code blocks",
+  "author": "Evan Sims",
+  "isDesktopOnly": false
+}
